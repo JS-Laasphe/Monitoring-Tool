@@ -15,8 +15,13 @@ get_location_info = True
 write_logs = True
 send_telegram_messages = False
 
+log_format = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+
 info_handler = RotatingFileHandler("internet_speed.log", maxBytes=1000000, backupCount=5)
+info_handler.setFormatter(log_format)
 error_handler = RotatingFileHandler("error.log", maxBytes=1000000, backupCount=5)
+error_handler.setFormatter(log_format)
+
 info_logger = logging.getLogger("InfoLogger")
 info_logger.setLevel(logging.INFO)
 info_logger.addHandler(info_handler)
@@ -49,8 +54,8 @@ def get_speed():
             s = speedtest.Speedtest()
             s.get_best_server()
             ping_time = s.results.ping
-            download_speed = round(s.download() / 10 ** 6 / 8, 2)  # in MBps, rounded to 2 decimals
-            upload_speed = round(s.upload() / 10 ** 6 / 8, 2)  # in MBps, rounded to 2 decimals
+            download_speed = round(s.download() / 10 ** 6 / 8, 2)
+            upload_speed = round(s.upload() / 10 ** 6 / 8, 2)
             return download_speed, upload_speed, ping_time
         except Exception as e:
             if write_logs:
